@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    ports:
+      - "${DB_PORT:-3308}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Root@123
+      MYSQL_DATABASE: lease_contract_administrator
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Admin@123
+      MYSQL_INITDB_ADDITIONAL_GRANT: "GRANT ALL PRIVILEGES ON lease_contract_administrator.* TO 'admin'@'%';"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

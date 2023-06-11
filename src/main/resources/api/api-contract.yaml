@@ -1,0 +1,199 @@
+openapi: 3.0.1
+info:
+  title: Lease Contract Administrator Service
+  version: '1.0.0'
+  description: Lease Contract Administrator Service manages the leasing contracts for vehicles.
+  contact:
+    name: Asmita Tiwari
+    email: asmitatiwari185@gmail.com
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /contract:
+    post:
+      tags:
+        - contract-controller
+      description: API intended for the manage the leasing contracts
+      operationId: createContract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '404':
+          description: Data Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidRequest'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequest'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequest'
+components:
+  schemas:
+    ContractRequest:
+      type: object
+      properties:
+        contractNo:
+          type: integer
+          format: int64
+        monthlyRate:
+          minimum: 0.01
+          exclusiveMinimum: false
+          type: number
+        customer:
+          $ref: '#/components/schemas/CustomerRequest'
+        vehicle:
+          $ref: '#/components/schemas/VehicleRequest'
+    CustomerRequest:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        customerId:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+          example: max
+        lastName:
+          type: string
+          example: Mustermann
+        birthDate:
+          type: string
+          format: date
+          example: 1980-01-01
+    VehicleRequest:
+      required:
+        - brand
+        - model
+        - price
+        - year
+      type: object
+      properties:
+        vehicleId:
+          type: integer
+          format: int64
+        brand:
+          type: string
+          example: BMW
+        model:
+          type: string
+          example: X3
+        year:
+          type: integer
+          format: int32
+          example: 2022
+        vin:
+          type: string
+          example: 1GNEK13ZX3R298984
+        price:
+          type: number
+          example: 43.350
+    ContractResponse:
+      type: object
+      properties:
+        contractNo:
+          type: integer
+          format: int64
+          example: 1234567
+        monthlyRate:
+          type: number
+          example: 35000
+        customer:
+          $ref: '#/components/schemas/CustomerResponse'
+        vehicle:
+          $ref: '#/components/schemas/VehicleResponse'
+    CustomerResponse:
+      type: object
+      properties:
+        customerId:
+          type: integer
+          format: int64
+          example: 1234
+        firstName:
+          type: string
+          example: max
+        lastName:
+          type: string
+          example: Mustermann
+        birthDate:
+          type: string
+          format: date
+          example: 1980-01-01
+    VehicleResponse:
+      type: object
+      properties:
+        vehicleId:
+          type: integer
+          format: int64
+          example: 20011
+        brand:
+          type: string
+          example: BMW
+        model:
+          type: string
+          example: X3
+        year:
+          type: integer
+          format: int32
+          example: 2022
+        vin:
+          type: string
+          example: 1GNEK13ZX3R298984
+        price:
+          type: number
+          example: 43.350
+    InvalidRequest:
+      type: object
+      description: The request body is invalid (missing, empty or extra fields)
+      allOf:
+        - $ref: '#/components/schemas/ContractErrorResponse'
+        - type: object
+          properties:
+            errorMessage:
+              type: string
+              example: Error Message
+      required:
+        - errorMessage
+
+    ContractErrorResponse:
+      type: object
+      description: Generic response structure
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+          example: /api/contract
+        statusCode:
+          type: integer
+          example: 400
+        statusMessage:
+          type: string
+          example: OK
+      required:
+        - timestamp
+        - path
+        - statusCode
+        - statusMessage
